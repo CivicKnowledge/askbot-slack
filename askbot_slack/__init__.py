@@ -24,8 +24,7 @@ def notify_post_created(sender, instance, created, raw, using, **kwargs):
     """
     if created and askbot_settings.SLACK_ENABLED:
         
-        
-        params = {
+        payload = {
         	"text": None,
             "username": askbot_settings.SLACK_USERNAME,
             "channel": askbot_settings.SLACK_CHANNEL,
@@ -49,11 +48,11 @@ def notify_post_created(sender, instance, created, raw, using, **kwargs):
         }
 
         if instance.is_question():
-            params['text'] = _('New Question') 
+            payload['text'] = _('New Question') 
         elif instance.is_answer():
-            params['text'] = _('New Answer') 
+            payload['text'] = _('New Answer') 
         elif instance.is_comment():
-            params['text'] = _('New Comment') 
+            payload['text'] = _('New Comment') 
             
         requests.post(askbot_settings.SLACK_WEBHOOK_URL, data=json.dumps(payload))
 
