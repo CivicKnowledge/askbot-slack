@@ -44,3 +44,13 @@ askbot_settings.register(
         description=_('Slack webhook url')
     )
 )
+
+askbot_settings.register(
+    livesettings.StringValue(
+        SLACK_SETTINGS,
+        'SLACK_BASE_URL',
+        default='',
+        description=_('Base URL ofr posting links to questions')
+    )
+)
+
