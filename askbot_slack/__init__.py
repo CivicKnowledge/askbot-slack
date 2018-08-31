@@ -24,6 +24,11 @@ def notify_post_created(sender, instance, created, raw, using, **kwargs):
     """
     if created and askbot_settings.SLACK_ENABLED:
         
+        from django.core import serializers
+
+        # assuming obj is a model instance
+        serialized_obj = serializers.serialize('json', [ instance, ])
+        
         payload = {
         	"text": None,
             "username": askbot_settings.SLACK_USERNAME,
@@ -38,7 +43,7 @@ def notify_post_created(sender, instance, created, raw, using, **kwargs):
                     "author_icon": "https://www.gravatar.com/avatar/3f9d29918d919c34366548f05a3b07a6?s=128&d=identicon&r=PG",
                     "title": instance.thread.title,
                     "title_link": get_url(instance),
-                    "text": "The downtown partnership publishes 37K people living Downtown, 81K employees. https://downtownsandiego.org/",
+                    "text": serialized_obj,
                     "image_url": "http://my-website.com/path/to/image.jpg",
                     "thumb_url": "http://example.com/path/to/thumb.png",
                     "footer": "Insights",
