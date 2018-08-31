@@ -32,7 +32,7 @@ def notify_post_created(sender, instance, created, raw, using, **kwargs):
         
         title = instance.thread.title
         thread_id = instance.thread_id
-        object_id = instance_id
+        object_id = instance.id
      
         
         payload = {
