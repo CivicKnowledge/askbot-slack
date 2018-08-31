@@ -29,6 +29,12 @@ def notify_post_created(sender, instance, created, raw, using, **kwargs):
         # assuming obj is a model instance
         serialized_obj = serializers.serialize('json', [ instance, instance.thread, instance.author])
         
+        
+        title = instance.thread.title
+        thread_id = instance.thread_id
+        object_id = instance_id
+     
+        
         payload = {
         	"text": None,
             "username": askbot_settings.SLACK_USERNAME,
@@ -38,14 +44,14 @@ def notify_post_created(sender, instance, created, raw, using, **kwargs):
                 {
                     "fallback": instance.thread.title,
                     "color": "#36a64f",
-                    "author_name": "Eric Busboom",
-                    "author_link": "https://insights.civicknowledge.com/users/1/eric/",
-                    "author_icon": "https://www.gravatar.com/avatar/3f9d29918d919c34366548f05a3b07a6?s=128&d=identicon&r=PG",
+                    "author_name": instance.author.username,
+                    "author_link": get_url(instance.author),
+                    "author_icon": "https:"+instance.author.get_avatar_url(120),
                     "title": instance.thread.title,
                     "title_link": get_url(instance),
-                    "text": serialized_obj,
-                    "image_url": "http://my-website.com/path/to/image.jpg",
-                    "thumb_url": "http://example.com/path/to/thumb.png",
+                    "text": instance.text,
+                    #"image_url": "http://my-website.com/path/to/image.jpg",
+                    #"thumb_url": "http://example.com/path/to/thumb.png",
                     "footer": "Insights",
                     "footer_icon": "http://www.civicknowledge.com/wp-content/uploads/sites/3/2018/08/CivicKnowledge_icon_144.png",
                 }
@@ -54,10 +60,16 @@ def notify_post_created(sender, instance, created, raw, using, **kwargs):
 
         if instance.is_question():
             payload['text'] = _('New Question') 
+            payload['ts'] = thread_id
         elif instance.is_answer():
             payload['text'] = _('New Answer') 
+            payload['ts'] = object_id
+            payload['thread_ts'] = thread_id
         elif instance.is_comment():
             payload['text'] = _('New Comment') 
+            payload['ts'] = object_id
+            payload['thread_ts'] = thread_id
+            
             
         requests.post(askbot_settings.SLACK_WEBHOOK_URL, data=json.dumps(payload))
 
