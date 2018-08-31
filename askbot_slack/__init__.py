@@ -27,7 +27,7 @@ def notify_post_created(sender, instance, created, raw, using, **kwargs):
         from django.core import serializers
 
         # assuming obj is a model instance
-        serialized_obj = serializers.serialize('json', [ instance, ])
+        serialized_obj = serializers.serialize('json', [ instance.thread, ])
         
         payload = {
         	"text": None,
